@@ -31,4 +31,17 @@ router.post("/", (req, res) => {
     res.status(201).json(newPhoto);
 });
 
+router.delete("/:id", (req, res) => {
+    const id = Number(req.params.id);
+
+    const index = photos.findIndex(p => p.id === id);
+
+    if (index === -1) {
+        return res.status(404).json({ error: "Photo not found" });
+    }
+
+    const deletedPhoto = photos.splice(index, 1);
+    res.json(deletedPhoto[0]);
+});
+
 module.exports = router;
