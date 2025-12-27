@@ -3,6 +3,7 @@ const app = express();
 const cors = require("cors");
 const port = 4000;
 
+
 // Middleware
 app.use(express.json());
 
@@ -10,6 +11,7 @@ app.use(cors());
 
 // Routes
 const cameraRoutes = require("./routes/cameras");
+const photoRoutes = require("./routes/photos");
 
 // Use camera routes with the /api/cameras prefix
 app.get("/", (req, res) => {
@@ -17,6 +19,7 @@ app.get("/", (req, res) => {
 });
 
 app.use("/api/cameras", cameraRoutes);
+app.use("/api/photos", photoRoutes);
 
 app.listen(port, () => {
     console.log(`Example app listening on port ${port}`);
