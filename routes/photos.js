@@ -1,47 +1,67 @@
 const express = require("express");
 const router = express.Router();
+const connectDB = require("../db");
+const { ObjectId } = require("mongodb");
 
-const photos = require("../data/photos");
-
-
-router.get("/", (req, res) => {
-    res.json(photos);
-});
-
-
-router.post("/", (req, res) => {
-    const { cameraId, imageUrl, caption } = req.body;
-
-
-    if (!cameraId || !imageUrl) {
-        return res.status(400).json({ error: "cameraId and imageUrl are required" });
+// GET all photos
+router.get("/", async (req, res) => {
+    try {
+        const db = await connectDB();
+        const photos = await db.collection("photos").find().toArray();
+        res.json(photos);
+    } catch (err) {
+        res.status(500).json({ error: "Failed to fetch photos" });
     }
-
-
-    const newId = photos.length === 0 ? 1 : photos[photos.length - 1].id + 1;
-
-    const newPhoto = {
-        id: newId,
-        cameraId: Number(cameraId),
-        imageUrl: String(imageUrl),
-        caption: caption ? String(caption) : "",
-    };
-
-    photos.push(newPhoto);
-    res.status(201).json(newPhoto);
 });
 
-router.delete("/:id", (req, res) => {
-    const id = Number(req.params.id);
+// POST new photo
+router.post("/", async (req, res) => {
+    try {
+        const { cameraId, imageUrl, caption } = req.body;
 
-    const index = photos.findIndex(p => p.id === id);
+        if (!cameraId || !imageUrl) {
+            return res.status(400).json({
+                error: "cameraId and imageUrl are required"
+            });
+        }
 
-    if (index === -1) {
-        return res.status(404).json({ error: "Photo not found" });
+        const db = await connectDB();
+
+        const newPhoto = {
+            cameraId: Number(cameraId),
+            imageUrl,
+            caption: caption || "",
+            createdAt: new Date(),
+        };
+
+        const result = await db.collection("photos").insertOne(newPhoto);
+
+        res.status(201).json({
+            _id: result.insertedId,
+            ...newPhoto
+        });
+    } catch (err) {
+        res.status(500).json({ error: "Failed to create photo" });
     }
-
-    const deletedPhoto = photos.splice(index, 1);
-    res.json(deletedPhoto[0]);
 });
+
+// DELETE photo
+router.delete("/:id", async (req, res) => {
+    try {
+        const db = await connectDB();
+        const id = new ObjectId(req.params.id);
+
+        const result = await db.collection("photos").findOneAndDelete({ _id: id });
+
+        if (!result.value) {
+            return res.status(404).json({ error: "Photo not found" });
+        }
+
+        res.json(result.value);
+    } catch (err) {
+        res.status(400).json({ error: "Invalid ID" });
+    }
+});
+
 
 module.exports = router;
