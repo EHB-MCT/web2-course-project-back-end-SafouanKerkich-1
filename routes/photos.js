@@ -44,6 +44,39 @@ router.post("/", async (req, res) => {
         res.status(500).json({ error: "Failed to create photo" });
     }
 });
+// UPDATE photo
+router.put("/:id", async (req, res) => {
+    try {
+        const db = await connectDB();
+        const id = new ObjectId(req.params.id);
+
+        const { cameraId, imageUrl, caption } = req.body;
+
+        // Only update fields that are provided
+        const updates = {};
+        if (cameraId !== undefined) updates.cameraId = Number(cameraId);
+        if (imageUrl !== undefined) updates.imageUrl = String(imageUrl);
+        if (caption !== undefined) updates.caption = String(caption);
+
+        if (Object.keys(updates).length === 0) {
+            return res.status(400).json({ error: "No fields to update" });
+        }
+
+        const result = await db.collection("photos").findOneAndUpdate(
+            { _id: id },
+            { $set: updates },
+            { returnDocument: "after" }
+        );
+
+        if (!result.value) {
+            return res.status(404).json({ error: "Photo not found" });
+        }
+
+        res.json(result.value);
+    } catch (err) {
+        res.status(400).json({ error: "Invalid ID" });
+    }
+});
 
 // DELETE photo
 router.delete("/:id", async (req, res) => {
