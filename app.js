@@ -1,7 +1,12 @@
+// https://www.youtube.com/watch?v=_7UQPve99r4
+// https://www.youtube.com/watch?v=SccSCuHhOw0
+// https://www.youtube.com/watch?v=ha_leEpnT30
+// https://www.youtube.com/watch?v=11aVPaJHsz0
 const express = require("express");
 const app = express();
 const cors = require("cors");
 
+// https://www.youtube.com/watch?v=4hkDPrl49KI
 const port = process.env.PORT || 4000;
 
 // MongoDB
