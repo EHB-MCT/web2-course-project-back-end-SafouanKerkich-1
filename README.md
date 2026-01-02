@@ -16,6 +16,9 @@ If you want to use the live backend instead of the dummy data, you will need to 
 
 This depends on which file you are working in and which data is expected to be returned.
 
+If you want to put images on the website please use Pexels or Unsplash to source the images. These are royalty free websites with High qality photos.
+To do this rightclick on the image you want to use > copy image link/adress and past that link/adress into the form. 
+
 ## Sources 🗃️
 
 Sources
@@ -56,3 +59,8 @@ https://expressjs.com/en/guide/routing.html
 
 AI assistance:
 https://chatgpt.com/share/69581411-4ef8-8005-a854-070b0aeece9f
+
+Images Source:
+
+https://www.pexels.com
+https://unsplash.com 
